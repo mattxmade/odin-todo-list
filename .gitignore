@@ -1,0 +1,5 @@
+#ignore source directory
+src
+
+#ignore node modules
+node_modules
