@@ -3,6 +3,8 @@ import './style.css';
 import Task from './Task';
 import Project from './Project';
 
+// JS months are 0 indexed ( pass -1 with month when calling date-fns methods )
+
 import { getDate, getDay, getMonth, getYear, isFuture, isToday } from 'date-fns';
 import { getDaysInMonth } from 'date-fns'
 import { isLeapYear } from 'date-fns';
@@ -45,11 +47,11 @@ const Todo = (() => {
                 break;
         
               case elements.today:
-                if (!isFuture(new Date(task.dueDate.year, task.dueDate.month, task.dueDate.day))) view.currentView.appendChild(newTaskCard);
+                if (!isFuture(new Date(task.dueDate.year, task.dueDate.month-1, task.dueDate.day))) view.currentView.appendChild(newTaskCard);
                 break;
         
               case elements.upcoming:
-                if (isFuture(new Date(task.dueDate.year, task.dueDate.month, task.dueDate.day))) view.currentView.appendChild(newTaskCard);
+                if (isFuture(new Date(task.dueDate.year, task.dueDate.month-1, task.dueDate.day))) view.currentView.appendChild(newTaskCard);
                 break;
             }
           }
@@ -280,11 +282,11 @@ const Todo = (() => {
               break;
 
             case 'today':
-              if (isToday(new Date(task.dueDate.year, task.dueDate.month, task.dueDate.day))) toAdd.push(Card(task));
+              if (isToday(new Date(task.dueDate.year, task.dueDate.month-1, task.dueDate.day))) toAdd.push(Card(task));
               break;
 
             case 'upcoming':
-              if (isFuture(new Date(task.dueDate.year, task.dueDate.month, task.dueDate.day))) toAdd.push(Card(task));
+              if (isFuture(new Date(task.dueDate.year, task.dueDate.month-1, task.dueDate.day))) toAdd.push(Card(task));
               break;
           }          
           
@@ -535,12 +537,11 @@ function showTaskForm(e) {
     newTask.name = inputs["task"].value;
     //console.log(newTask.name);
 
-    if (newTask.name === '')  {
-      document.querySelector('.fa-exclamation').classList.add('show-error');
-      return;
-    }
-    else document.querySelector('.fa-exclamation').classList.remove('show-error');
+    // Empty task description? :: return + visual error
+    document.querySelector('.fa-exclamation').classList.remove('show-error');
+    if (newTask.name === '') return document.querySelector('.fa-exclamation').classList.add('show-error');
 
+    // Process task
     newTask.project = inputs["project"].value;
 
     if (newTask.project === '') newTask.project = 'User';
@@ -549,26 +550,26 @@ function showTaskForm(e) {
     const project = Todo._getTaskProject(newTask.project, Todo.projects);
     Todo._addTaskToProject(newTask, project);
 
-    // Dates - set
+    // Dates
     const dateToday = Date.now();
-    const day   = getDate(dateToday);
-    const month = getMonth(dateToday);
-    const year  = getYear(dateToday);
+    newTask.creationDate.year  = getYear(dateToday);
+    newTask.creationDate.month = getMonth(dateToday)+1;
+    newTask.creationDate.day   = getDate(dateToday);
 
-    newTask.creationDate.year  = year;
-    newTask.creationDate.month = month;
-    newTask.creationDate.day   = day;
+    console.log(newTask.creationDate);
 
-    const myDate = [ Number(myDay.textContent), Number(myMonth.textContent)-1, Number(myYear.textContent) ];
+    const myDate = [ Number(myYear.textContent), Number(myMonth.textContent), Number(myDay.textContent) ];
 
     myDate.forEach( date => {
       if ( isNaN(date) ) newTask.dueDate = '';
       else {
-        newTask.dueDate.year  = myDate[2];
+        newTask.dueDate.year  = myDate[0];
         newTask.dueDate.month = myDate[1];
-        newTask.dueDate.day   = myDate[0];
+        newTask.dueDate.day   = myDate[2];
       } 
     });
+
+    console.log(newTask.dueDate);
 
     newTask.time = inputs["time"].value;
     newTask.comment = inputs["comment"].value;
@@ -964,7 +965,7 @@ function Card(task) {
   pDate.classList.add('task-date-text');
 
   task.dueDate !== '' ? pDate.textContent = format(new Date(
-    task.dueDate.year, task.dueDate.month, task.dueDate.day), 'eee dd MMM yyyy' ) : pDate.textContent = '';
+    task.dueDate.year, task.dueDate.month-1, task.dueDate.day), 'eee dd MMM yyyy' ) : pDate.textContent = '';
 
   dateItem.appendChild(pDate);
 
