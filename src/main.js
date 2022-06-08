@@ -764,7 +764,7 @@ taskIcons.forEach(icon => {
 // aside - menu drawer icon
 const aside = document.querySelector('aside');
 const asideIcon = document.querySelector('.aside-drawer-icon');
-asideIcon.addEventListener('click', () => aside.classList.toggle('aside-drawer-position'));
+asideIcon.addEventListener('click', () => aside.classList.toggle('aside-drawer-animation'));
 
 // aside - Dates Menu
 const datesAside = document.querySelector('.app-aside-calendar');
