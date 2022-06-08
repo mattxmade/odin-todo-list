@@ -130,7 +130,7 @@ const Todo = (() => {
     list.forEach(item => {
 
       if (itemToCheck.id === item.id) {
-        console.log(itemToCheck.id, item.id);
+        //console.log(itemToCheck.id, item.id);
         exists = true;
         return;
       }
@@ -421,8 +421,6 @@ newTaskButtons.forEach(btn => {
   btn.addEventListener('click', showTaskForm);
 });
 
-let clickCount = 0;
-
  // Modal
 const taskModal = document.querySelector('dialog');
 
@@ -459,7 +457,7 @@ calendar.navLeft.addEventListener('click', () => {
   }
   
   for(let month of calendar.container.children) {
-    console.dir(month);
+    //console.dir(month);
         
     if (month.tagName === 'DIV') {
   
@@ -491,7 +489,7 @@ calendar.navRight.addEventListener('click', () => {
   }
       
   for(let month of calendar.container.children) {
-    console.dir(month);
+    //console.dir(month);
   
     if (month.tagName === 'DIV') {
   
@@ -541,7 +539,6 @@ closeCalendar.addEventListener('click', () => {
     lastSelectedMonth.style.visibility = 'hidden';
   }
 
-  //year.focus();
   calendar.container.style.visibility = 'hidden';
 });
 // CALENDAR END
@@ -609,7 +606,7 @@ function showTaskForm(e) {
     e.preventDefault();
 
     newTask.name = inputs["task"].value;
-    console.log(newTask.name);
+    //console.log(newTask.name);
 
     if (newTask.name === '')  {
       document.querySelector('.fa-exclamation').classList.add('show-error');
@@ -679,7 +676,6 @@ function showTaskForm(e) {
     Todo._updateStorage();
 
     taskModal.close();
-    clickCount++;
   
     form.removeEventListener('submit', formHandler);
 
@@ -692,18 +688,12 @@ function showTaskForm(e) {
 
   function setPriortiy(e) {
     newTask.priorityFlag = getComputedStyle(e.target).color;
-    // e.target.parentNode.parentNode.parentNode.style.color = newTask.priorityFlag;
-
-    // for(let node of e.target.parentNode.parentNode.children) {
-    //   node.children[0].classList.toggle('icon-selector-visibility'); 
-    // }
   }
 
   function hideTaskForm(e) {
     e.preventDefault();
 
     taskModal.close();
-    clickCount++;
 
     for (let property in newTask) { delete newTask[property] }
 
@@ -715,13 +705,6 @@ function showTaskForm(e) {
 
     closeButton.removeEventListener('click', hideTaskForm);
   }
-
-  // if (clickCount > 2) {
-  //   console.log(closeButton);
-
-  //   flagIcons.forEach(flag => console.log(flag));
-  // } 
-  
 }
 
 //showTaskForm('ok');
@@ -787,7 +770,6 @@ projectDrpDn.addEventListener('click', () => {
           selector.textContent = project.name;
 
           selector.addEventListener('click', (e) => {
-            // console.dir(e.target.parentNode);
             projectInput.value = selector.textContent;
           });
 
@@ -837,16 +819,9 @@ taskIcons.forEach(icon => {
         break;
 
       case 'cal':
-        // if (lastSelectedMonth !== '') {
-        //   lastSelectedMonth.style.visibility = 'visible';
-        //   lastSelectedMonth = '';
-        // }
-        
         for(const value of date) {
           value.style.visibility = 'visible';
         }
-        // console.log(getDaysInMonth(
-        //   new Date(Number(year.textContent), Number(month.textContent)-1)));
         
         break;
 
@@ -856,14 +831,13 @@ taskIcons.forEach(icon => {
         break;
 
       case 'flg':
+
         showFlags.style.visibility = 'visible';
-        // showFlags.classList.add('icon-selector-visibility');
+
         for (const flag of showFlags.children) {
           flag.children[0].style.visibility = 'visible';
-          // flag.children[0].classList.add('icon-selector-visibility');
-          //flag.classList.add('icon-selector-visibility');
         }
-        //priorityDisplayHandler(e);
+
         break;
 
       case 'cmt':
@@ -883,13 +857,6 @@ const flagIcon = document.querySelector('.flg');
 function priorityDisplayHandler(element) {
   flagIcon.style.color = getComputedStyle(element.target).color;
 }
-
-// old version for animated flags
-// function priorityDisplayHandler(element) {
-//   element.target.children[0].childNodes.forEach(node => {
-//     if (node.tagName === 'LI') node.childNodes[0].classList.toggle('icon-selector-visibility');
-//   });  
-// }
 
 // aside - menu drawer icon
 const aside = document.querySelector('aside');
@@ -913,23 +880,26 @@ let lastHeading = 'Tasks';
 
 function sortTasks(e) {
   switch(e.target.textContent.trim()) {
+
     case 'Tasks':
-      console.log('tasks-tab');
-      lastHeading = 'Tasks';
       //Todo.view.populateAll();
+      //console.log('tasks-tab');
+      lastHeading = 'Tasks';
       Todo.elements.dbHeading.textContent = 'Tasks';
       Todo.view.sort(Todo.elements.dashboard, 'all');
       break;
+
     case 'Today':
-      console.log('today-tab');
-      //Todo.view.populateToday();
       lastHeading = 'Today';
+      //console.log('today-tab');
+      //Todo.view.populateToday();
       Todo.elements.dbHeading.textContent = 'Today';
       Todo.view.sort(Todo.elements.today, 'today');
       break;
+
     case 'Upcoming':
       lastHeading = 'Upcoming';
-      console.log('upcoming-tab');
+      //console.log('upcoming-tab');
       //Todo.view.populateUpcoming();
       Todo.elements.dbHeading.textContent = 'Upcoming';
       Todo.view.sort(Todo.elements.upcoming, 'upcoming');
@@ -1140,7 +1110,7 @@ function Card(task) {
   removeItem.appendChild(iRemove);
   taskList.appendChild(removeItem);
 
-  console.log(`Task ID: ${cardItem.id}`);
+  //console.log(`Task ID: ${cardItem.id}`);
 
   iRemove.addEventListener('click', () => {
     cardItem.classList.add('remove-task');
