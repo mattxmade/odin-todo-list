@@ -509,12 +509,12 @@ const daysInMonths = calendar.container.childNodes
 daysInMonths.forEach(month => {
   if (month.tagName === 'DIV') {
     month.children[1].childNodes.forEach(day => day.addEventListener('click', (e) => {
-      handleCalendar(e, month)
+      handleDate(e, month)
     }));
   }
 });
 
-function handleCalendar(day, month) {
+function handleDate(day, month) {
   myDay.textContent = day.target.textContent;
   myMonth.textContent = month.id;
 
@@ -1020,37 +1020,6 @@ function Card(task) {
   taskList.classList.add('task-details');
   taskInfoBox.appendChild(taskList);
 
-  // // li - Time
-  // const timeItem = Doc(c, 'li');
-  // timeItem.classList.add('task-time');
-
-  // const iTime = Doc(c, 'i');
-
-  // if (task.time === '') {
-  //   iTime.classList.add('fas');
-  //   iTime.classList.add('fa-circle-notch');
-  //   iTime.style.color = 'lightgrey';
-  // }
-  // else {
-  //   iTime.classList.add('far');
-  //   iTime.classList.add('fa-clock');
-  // }
-
-  // iTime.classList.add('task-time-icon');
-  // timeItem.appendChild(iTime);
-
-  // const pTime = Doc(c, 'p');
-  // pTime.classList.add('task-time-text');
-  // pTime.textContent = `${task.time} PM`;
-  // timeItem.appendChild(pTime);
-
-  // if (task.time === '') {
-    
-  //   pTime.textContent = '';
-  // }
-
-  // taskList.appendChild(timeItem);
-
   // li - Date
   const dateItem = Doc(c, 'li');
   dateItem.classList.add('task-date');
@@ -1068,7 +1037,6 @@ function Card(task) {
   pDate.classList.add('task-date-text');
 
   task.dueDate !== '' ? pDate.textContent = format(new Date(
-    //task.dueDate.year, task.dueDate.month, task.dueDate.day), 'i MMM yyyy' ) : pDate.textContent = '';
     task.dueDate.year, task.dueDate.month, task.dueDate.day), 'eee dd MMM yyyy' ) : pDate.textContent = '';
 
   dateItem.appendChild(pDate);
