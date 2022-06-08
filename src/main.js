@@ -507,6 +507,8 @@ yearDn.addEventListener('click', (e) => {
   myYear.textContent = deincrement;
 });
 
+const flagIcon = document.querySelector('.flg');
+
 function showTaskForm(e) {
 
   taskModal.showModal();
@@ -556,8 +558,6 @@ function showTaskForm(e) {
     newTask.creationDate.month = getMonth(dateToday)+1;
     newTask.creationDate.day   = getDate(dateToday);
 
-    console.log(newTask.creationDate);
-
     const myDate = [ Number(myYear.textContent), Number(myMonth.textContent), Number(myDay.textContent) ];
 
     myDate.forEach( date => {
@@ -568,8 +568,6 @@ function showTaskForm(e) {
         newTask.dueDate.day   = myDate[2];
       } 
     });
-
-    console.log(newTask.dueDate);
 
     newTask.time = inputs["time"].value;
     newTask.comment = inputs["comment"].value;
@@ -616,6 +614,7 @@ function showTaskForm(e) {
 
   function setPriortiy(e) {
     newTask.priorityFlag = getComputedStyle(e.target).color;
+    flagIcon.style.color = getComputedStyle(e.target).color;
   }
 
   function hideTaskForm(e) {
@@ -775,16 +774,6 @@ taskIcons.forEach(icon => {
     }
   });
 });
-
-//js-flag-icon - non-animated version
-const flagSelectors = document.querySelectorAll('.js-flag-icon');
-flagSelectors.forEach(flag => flag.addEventListener('click', priorityDisplayHandler))
-
-const flagIcon = document.querySelector('.flg');
-
-function priorityDisplayHandler(element) {
-  flagIcon.style.color = getComputedStyle(element.target).color;
-}
 
 // aside - menu drawer icon
 const aside = document.querySelector('aside');
