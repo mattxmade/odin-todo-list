@@ -585,14 +585,6 @@ function showTaskForm(e) {
 
   taskModal.showModal();
 
-  // const newTask = {};
-  // newTask.name = 'unset';
-  // newTask.project = 'User';
-  // newTask.date = 'unset';
-  // newTask.time = 'unset';
-  // newTask.priority = 'white';
-  // newTask.comment = 'none';
-
   const newTask = Task.create();
 
   const form = document.querySelector('form');
