@@ -433,77 +433,9 @@ myDay.textContent   = 'day';
 myMonth.textContent = 'month';
 myYear.textContent  = 'year';
 
-// close calendar ?
-let lastSelectedMonth = ''
-
-// // CALENDAR
+// CALENDAR
 const calendar = Calendar();
 document.querySelector('.input-calendar').appendChild(calendar.container);
-
-  // calendar navigation buttons
-calendar.navLeft.dataset.index = getMonth( Date.now() )+1;
-
-calendar.navLeft.addEventListener('click', () => {
-  
-  calendar.navLeft.dataset.index = Number(calendar.navLeft.dataset.index);    //
-  calendar.navRight.dataset.index = Number(calendar.navRight.dataset.index);  //
-      
-  calendar.navLeft.dataset.index--;
-  calendar.navRight.dataset.index--;
-  
-  if (Number(calendar.navLeft.dataset.index) <= 0) {
-    calendar.navLeft.dataset.index  = 12; 
-    calendar.navRight.dataset.index = 12;
-  }
-  
-  for(let month of calendar.container.children) {
-    //console.dir(month);
-        
-    if (month.tagName === 'DIV') {
-  
-      if (Number(calendar.navLeft.dataset.index) === Number(month.id)) {
-        month.style.visibility = 'visible';
-        lastSelectedMonth = month;
-      } 
-      else { 
-        month.style.visibility = 'hidden';
-      }
-    }
-  
-  };
-});
-  
-calendar.navRight.dataset.index = getMonth( Date.now() )+1;
-  
-calendar.navRight.addEventListener('click', () => {
-  
-  calendar.navRight.dataset.index = Number(calendar.navRight.dataset.index);
-  calendar.navLeft.dataset.index = Number(calendar.navLeft.dataset.index);
-  
-  calendar.navRight.dataset.index++;
-  calendar.navLeft.dataset.index++;
-  
-  if (Number(calendar.navRight.dataset.index) >= 13) {
-    calendar.navRight.dataset.index = 1; 
-    calendar.navLeft.dataset.index  = 1;
-  }
-      
-  for(let month of calendar.container.children) {
-    //console.dir(month);
-  
-    if (month.tagName === 'DIV') {
-  
-      if (Number(calendar.navRight.dataset.index) === Number(month.id)) {
-        month.style.visibility = 'visible';
-        lastSelectedMonth = month;
-      } 
-      else { 
-        month.style.visibility = 'hidden';
-      }
-    }
-  
-  };  
-});
 
 const daysInMonths = calendar.container.childNodes
 daysInMonths.forEach(month => {
@@ -524,21 +456,17 @@ function handleDate(day, month) {
 const showCalendar = Doc(s1, '.js-calendar-icon-btn');
 showCalendar.addEventListener('click', () => {
 
-  if (lastSelectedMonth !== '') {
-    lastSelectedMonth.style.visibility = 'visible';
-    lastSelectedMonth = '';
-  }
-
   calendar.container.style.visibility = 'visible';
+  calendar.monthTabs.forEach(month =>  {
+    if (month.id === calendar.navLeft.dataset.index) month.style.visibility = 'visible';
+  });
+
 });
   
 const closeCalendar = Doc(s1, '.close-calendar-btn');
 closeCalendar.addEventListener('click', () => {
 
-  if (lastSelectedMonth !== '') {
-    lastSelectedMonth.style.visibility = 'hidden';
-  }
-
+  calendar.monthTabs.forEach(month => month.style.visibility = 'hidden');
   calendar.container.style.visibility = 'hidden';
 });
 // CALENDAR END
@@ -557,7 +485,6 @@ yearUp.addEventListener('click', (e) => {
     return;
   }
     
-
   let increment = Number(myYear.textContent);
   increment++;
   myYear.textContent = increment;
@@ -736,7 +663,7 @@ const commentInput = Doc(s1, '.input-comment');
 const inputs = [
   newTaskInput, 
   projectInput, projectDrpDn,
-  day, month, year, calendar.container, lastSelectedMonth,
+  day, month, year, calendar.container, 
   showFlags,
   timeInput,
   commentInput
