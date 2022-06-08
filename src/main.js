@@ -554,7 +554,7 @@ yearUp.addEventListener('click', (e) => {
   if (myYear.textContent === 'year') {
     myYear.textContent = getYear( Date.now() );
 
-    if (myDay.textContent   === 'day') myDay.textContent = getDay( Date.now() );
+    if (myDay.textContent   === 'day') myDay.textContent = getDate( Date.now() );
     if (myMonth.textContent === 'month') myMonth.textContent = getMonth( Date.now() )+1;
 
     return;
@@ -570,7 +570,7 @@ yearDn.addEventListener('click', (e) => {
   if (myYear.textContent === 'year') {
     myYear.textContent = getYear( Date.now() );
 
-    if (myDay.textContent   === 'day') myDay.textContent = getDay( Date.now() );
+    if (myDay.textContent   === 'day') myDay.textContent = getDate( Date.now() );
     if (myMonth.textContent === 'month') myMonth.textContent = getMonth( Date.now() )+1;
 
     return;
