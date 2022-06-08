@@ -660,7 +660,7 @@ const showFlags = Doc(s1, '.flag-icon-group');
 const timeInput    = Doc(s1, '.input-time');
 const commentInput = Doc(s1, '.input-comment');
 
-const inputs = [
+const displayInputs = [
   newTaskInput, 
   projectInput, projectDrpDn,
   day, month, year, calendar.container, 
@@ -725,7 +725,7 @@ taskIcons.forEach(icon => {
       flag.children[0].style.visibility = 'hidden';
     } 
 
-    inputs.forEach(input => {
+    displayInputs.forEach(input => {
       if (input !== '') input.style.visibility = 'hidden';
     });
       
@@ -733,7 +733,6 @@ taskIcons.forEach(icon => {
     e.target.classList.add('modal-icon-select');
     
     switch(e.target.classList[2]) {
-      // case 'cal':
       case 'pen':
         newTaskInput.style.visibility = 'visible';
         newTaskInput.focus();
@@ -749,27 +748,14 @@ taskIcons.forEach(icon => {
         for(const value of date) {
           value.style.visibility = 'visible';
         }
-        
-        break;
-
-      case 'clk':
-        timeInput.style.visibility = 'visible';
-        timeInput.focus();
         break;
 
       case 'flg':
-
         showFlags.style.visibility = 'visible';
 
         for (const flag of showFlags.children) {
           flag.children[0].style.visibility = 'visible';
         }
-
-        break;
-
-      case 'cmt':
-        commentInput.style.visibility = 'visible';
-        commentInput.focus();
         break;
     }
   });
