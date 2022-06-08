@@ -2,6 +2,7 @@ import './style.css';
 
 import Task from './Task';
 import Project from './Project';
+import Group from './cGroup';
 
 // JS months are 0 indexed ( pass -1 with month when calling date-fns methods )
 
@@ -16,6 +17,8 @@ const Todo = (() => {
   // model
   const projects = [];
   const projectsFromLocalStorage = localStorage.getItem('projectList');
+
+  const asideTab_projects = document.querySelector('.app-aside-projects');
 
   const _checkStorage = () => {
     let restore = true;
@@ -34,7 +37,7 @@ const Todo = (() => {
         
             if (lastIndex !== projects.length) {
               // Create new group
-              Group(setProject);
+              Group(setProject, asideTab_projects);
             }
 
             const newTaskCard = Card(task);
@@ -167,6 +170,8 @@ const Todo = (() => {
 
   // View - DOM
   const elements = {
+    modal         : { task: { icons: document.querySelectorAll('.js-task-icon') } },
+    calendar      : Calendar(),
     notifications : document.querySelector('.user-notify'),
     aside         : document.querySelector('.app-aside-projects'),
     mainWindow    : document.querySelector('.app-main-task-window'),
@@ -175,9 +180,169 @@ const Todo = (() => {
     today         : document.querySelector('.dashboard-today'),
     upcoming      : document.querySelector('.dashboard-upcoming'),
     search        : document.querySelector('.dashboard-search'),
-    dbProject     : document.querySelector('.dashboard-project')
+    dbProject     : document.querySelector('.dashboard-project'),
   }
 
+  document.querySelector('.input-calendar').appendChild(elements.calendar.container);
+
+  const eventListeners = {
+    calendar: {
+      show          : document.querySelector('.js-calendar-icon-btn'),
+      hide          : document.querySelector('.js-close-calendar-btn'),
+      daysInMonths  : elements.calendar.container.childNodes
+    }
+  }
+
+  eventListeners.calendar.show.addEventListener('click', () => {
+
+    elements.calendar.container.style.visibility = 'visible';
+    elements.calendar.monthTabs.forEach(month =>  {
+      if (month.id === elements.calendar.navLeft.dataset.index) month.style.visibility = 'visible';
+    });
+
+  });
+
+  eventListeners.calendar.hide.addEventListener('click', () => {
+
+    elements.calendar.monthTabs.forEach(month => month.style.visibility = 'hidden');
+    elements.calendar.container.style.visibility = 'hidden';
+  });
+
+  const userInputs = {
+    task : { input: document.querySelector('.input-task') },
+
+    project: {
+      input   : document.querySelector('.input-project'),
+      drpDn   : document.querySelector('.input-dropdown-icon'),
+      group   : document.querySelector('.dropdown-set-project'),
+      menu    : []
+    },
+
+    date: {
+      day     : document.querySelector('.input-day'),
+      year    : document.querySelector('.input-year'),
+      month   : document.querySelector('.input-month'),
+
+      // newTaskDate | form - catch using above
+      myDay   : document.querySelector('.input-day').children[0],   // paragraph
+      myYear  : document.querySelector('.input-year').children[0],  // paragraph
+      myMonth : document.querySelector('.input-month').children[0], // paragraph
+
+      yearUp  : document.querySelector('.year-nav-up'),
+      yearDn  : document.querySelector('.year-nav-down'),
+    },
+
+    priorityFlag: {
+      icon    : document.querySelector('.flg'),
+      group   : document.querySelector('.flag-icon-group')
+      
+    }
+  }
+
+  userInputs.task.input.blur();
+
+  // Date inputs
+  userInputs.date.group = [
+    userInputs.date.day,
+    userInputs.date.year,
+    userInputs.date.month
+  ]
+
+  eventListeners.calendar.daysInMonths.forEach(month => {
+    if (month.tagName === 'DIV') month.children[1].childNodes.forEach(day => 
+      day.addEventListener('click', (e) => handleDate(e, month)));
+  });
+
+  function handleDate(day, month) {
+    // set day/month to date from selected from calendar
+    userInputs.date.myDay.textContent = day.target.textContent;
+    userInputs.date.myMonth.textContent = month.id;
+
+    // set to current year if year still set as placeholder
+    if (userInputs.date.myYear.textContent === 'year') userInputs.date.myYear.textContent = getYear( Date.now() );
+  }
+
+  // Year Navigation Icons
+  userInputs.date.yearUp.addEventListener('click', (e) => {
+    console.dir(e.target);
+    if (userInputs.date.myYear.textContent === 'year') return setInputsToTodaysDate();
+      
+    let increment = Number(userInputs.date.myYear.textContent); increment++;
+    userInputs.date.myYear.textContent = increment;
+  });
+
+  function setInputsToTodaysDate() {
+    Todo.userInputs.date.myYear.textContent = getYear( Date.now() );
+
+    if (userInputs.date.myDay.textContent   ===  'day' ) userInputs.date.myDay.textContent = getDate( Date.now() );
+    if (userInputs.date.myMonth.textContent === 'month') userInputs.date.myMonth.textContent = getMonth( Date.now() )+1;
+  }
+
+  userInputs.date.yearDn.addEventListener('click', (e) => {
+    console.dir(e.target);
+    if (userInputs.date.myYear.textContent === 'year') return setInputsToTodaysDate();
+
+    let deincrement = Number(userInputs.date.myYear.textContent); deincrement--;
+    userInputs.date.myYear.textContent = deincrement;
+  });
+
+  userInputs.project.drpDn.addEventListener('click', () => {
+
+    if (userInputs.project.menu.length === 0) {
+  
+      const selectContainer = Doc(c, 'ul');
+      selectContainer.classList.add('project-select-menu');
+      selectContainer.style.width = '100%';
+      selectContainer.style.height = 'auto';
+      selectContainer.style.position = 'relative';
+      selectContainer.style.visibility = 'visible';
+  
+        if (projects.length === 0) {
+          const selector = Doc(c, 'li');
+          selector.classList.add('project-selector');
+          selector.textContent = 'Empty';
+          selector.style.position = 'relative';
+          selector.style.cursor = 'pointer';
+          selectContainer.appendChild(selector);
+        }
+  
+        else {
+          for (const project of projects) {
+            const selector = Doc(c, 'li');
+            selector.classList.add('project-selector');
+            selector.style.cursor = 'pointer';
+            selector.textContent = project.name;
+  
+            selector.addEventListener('click', (e) => {
+              userInputs.project.input.value = selector.textContent;
+            });
+  
+            selectContainer.appendChild(selector);
+          }
+        }
+      userInputs.project.menu.push(selectContainer);
+      userInputs.project.group.appendChild(selectContainer);  
+    }
+  
+    else {
+      userInputs.project.menu[0].remove();
+      userInputs.project.menu = [];
+    }
+  
+  });
+
+  const keyInputGroup = [
+    userInputs.task.input,
+    userInputs.project.input, userInputs.project.drpDn,
+
+    userInputs.date.day, userInputs.date.month,
+    userInputs.date.year,
+
+    elements.calendar.container,
+    userInputs.priorityFlag.group
+  ];
+
+  // Views
   const view = {
     lastView    : elements.dashboard,
     currentView : elements.dashboard,
@@ -395,6 +560,8 @@ const Todo = (() => {
 
     projects,
     elements,
+    userInputs,
+    keyInputGroup,
     view,
     _notifyProject,
 
@@ -425,87 +592,6 @@ newTaskButtons.forEach(btn => {
 
  // Modal
 const taskModal = document.querySelector('dialog');
-
-// date input
-const myDay = document.querySelector('.input-day').children[0]
-const myMonth = document.querySelector('.input-month').children[0]
-const myYear = document.querySelector('.input-year').children[0]
-
-myDay.textContent   = 'day';
-myMonth.textContent = 'month';
-myYear.textContent  = 'year';
-
-// CALENDAR
-const calendar = Calendar();
-document.querySelector('.input-calendar').appendChild(calendar.container);
-
-const daysInMonths = calendar.container.childNodes
-daysInMonths.forEach(month => {
-  if (month.tagName === 'DIV') {
-    month.children[1].childNodes.forEach(day => day.addEventListener('click', (e) => {
-      handleDate(e, month)
-    }));
-  }
-});
-
-function handleDate(day, month) {
-  myDay.textContent = day.target.textContent;
-  myMonth.textContent = month.id;
-
-  if (myYear.textContent === 'year') myYear.textContent = getYear( Date.now() );
-}
-
-const showCalendar = Doc(s1, '.js-calendar-icon-btn');
-showCalendar.addEventListener('click', () => {
-
-  calendar.container.style.visibility = 'visible';
-  calendar.monthTabs.forEach(month =>  {
-    if (month.id === calendar.navLeft.dataset.index) month.style.visibility = 'visible';
-  });
-
-});
-  
-const closeCalendar = Doc(s1, '.close-calendar-btn');
-closeCalendar.addEventListener('click', () => {
-
-  calendar.monthTabs.forEach(month => month.style.visibility = 'hidden');
-  calendar.container.style.visibility = 'hidden';
-});
-// CALENDAR END
-
-// Year input
-const yearUp = document.querySelector('.year-nav-up');
-const yearDn = document.querySelector('.year-nav-down');
-
-yearUp.addEventListener('click', (e) => {
-  if (myYear.textContent === 'year') {
-    myYear.textContent = getYear( Date.now() );
-
-    if (myDay.textContent   === 'day') myDay.textContent = getDate( Date.now() );
-    if (myMonth.textContent === 'month') myMonth.textContent = getMonth( Date.now() )+1;
-
-    return;
-  }
-    
-  let increment = Number(myYear.textContent);
-  increment++;
-  myYear.textContent = increment;
-});
-
-yearDn.addEventListener('click', (e) => {
-  if (myYear.textContent === 'year') {
-    myYear.textContent = getYear( Date.now() );
-
-    if (myDay.textContent   === 'day') myDay.textContent = getDate( Date.now() );
-    if (myMonth.textContent === 'month') myMonth.textContent = getMonth( Date.now() )+1;
-
-    return;
-  }
-
-  let deincrement = Number(myYear.textContent);
-  deincrement--;
-  myYear.textContent = deincrement;
-});
 
 const flagIcon = document.querySelector('.flg');
 
@@ -558,7 +644,7 @@ function showTaskForm(e) {
     newTask.creationDate.month = getMonth(dateToday)+1;
     newTask.creationDate.day   = getDate(dateToday);
 
-    const myDate = [ Number(myYear.textContent), Number(myMonth.textContent), Number(myDay.textContent) ];
+    const myDate = [ Number(Todo.userInputs.date.myYear.textContent), Number(Todo.userInputs.date.myMonth.textContent), Number(Todo.userInputs.date.myDay.textContent) ];
 
     myDate.forEach( date => {
       if ( isNaN(date) ) newTask.dueDate = '';
@@ -578,7 +664,7 @@ function showTaskForm(e) {
 
     if (lastIndex !== Todo.projects.length) {
       // Create new group
-      Group(project);
+      Group(project, document.querySelector('.app-aside-projects')); // const asideTab_projects
     }
 
     const newTaskCard = Card(newTask);
@@ -636,124 +722,47 @@ function showTaskForm(e) {
 
 //showTaskForm('ok');
 
-const taskIcons    = document.querySelectorAll('.js-task-icon');
-const newTaskInput = Doc(s1, '.input-task');
-newTaskInput.blur();
+const priorityFlagIcons = Doc(s1, '.flag-icon-group');
 
-const projectInput    = Doc(s1, '.input-project');
-const projectDrpDn    = Doc(s1, '.input-dropdown-icon');
-const projectInputGrp = Doc(s1, '.dropdown-set-project');
-
-const modalIcons = {
-  task:    { input: newTaskInput }, 
-  project: { group: projectInputGrp, input: projectInput, icon: projectDrpDn, menu: [], count: 0 },
-}
-
-const day   = Doc(s1, '.input-day'  );
-const month = Doc(s1, '.input-month');
-const year  = Doc(s1, '.input-year' );
-
-const date = [ day, month, year];
-
-const showFlags = Doc(s1, '.flag-icon-group');
-
-const timeInput    = Doc(s1, '.input-time');
-const commentInput = Doc(s1, '.input-comment');
-
-const displayInputs = [
-  newTaskInput, 
-  projectInput, projectDrpDn,
-  day, month, year, calendar.container, 
-  showFlags,
-  timeInput,
-  commentInput
-];
-
-projectDrpDn.addEventListener('click', () => {
-
-  if (modalIcons.project.menu.length === 0) {
-
-    const selectContainer = Doc(c, 'ul');
-    selectContainer.classList.add('project-select-menu');
-    selectContainer.style.width = '100%';
-    selectContainer.style.height = 'auto';
-    selectContainer.style.position = 'relative';
-    selectContainer.style.visibility = 'visible';
-
-      if (Todo.projects.length === 0) {
-        const selector = Doc(c, 'li');
-        selector.classList.add('project-selector');
-        selector.textContent = 'Empty';
-        selector.style.position = 'relative';
-        selector.style.cursor = 'pointer';
-        selectContainer.appendChild(selector);
-      }
-
-      else {
-        for (const project of Todo.projects) {
-          const selector = Doc(c, 'li');
-          selector.classList.add('project-selector');
-          selector.style.cursor = 'pointer';
-          selector.textContent = project.name;
-
-          selector.addEventListener('click', (e) => {
-            projectInput.value = selector.textContent;
-          });
-
-          selectContainer.appendChild(selector);
-        }
-      }
-    modalIcons.project.menu.push(selectContainer);
-    modalIcons.project.group.appendChild(selectContainer);  
-  }
-
-  else {
-    modalIcons.project.menu[0].remove();
-    modalIcons.project.menu = [];
-  }
-
-});
-
-taskIcons.forEach(icon => {
+Todo.elements.modal.task.icons.forEach(icon => {
   icon.addEventListener('click', (e) => {
 
-    for (const icon of taskIcons) {
+    for (const icon of Todo.elements.modal.task.icons) {
       icon.classList.remove('modal-icon-select');
     }
 
-    for (const flag of showFlags.children) {
+    for (const flag of Todo.userInputs.priorityFlag.group.children) {
       flag.children[0].style.visibility = 'hidden';
     } 
 
-    displayInputs.forEach(input => {
+    Todo.keyInputGroup.forEach(input => {
       if (input !== '') input.style.visibility = 'hidden';
     });
-      
 
     e.target.classList.add('modal-icon-select');
     
     switch(e.target.classList[2]) {
       case 'pen':
-        newTaskInput.style.visibility = 'visible';
-        newTaskInput.focus();
+        Todo.userInputs.task.input.style.visibility = 'visible';
+        Todo.userInputs.task.input.focus();
         break;
 
       case 'prj':
-        projectInput.style.visibility = 'visible';
-        projectDrpDn.style.visibility = 'visible';
-        projectInput.focus();
+        Todo.userInputs.project.input.style.visibility = 'visible';
+        Todo.userInputs.project.drpDn.style.visibility = 'visible';
+        Todo.userInputs.project.input.focus();
         break;
 
       case 'cal':
-        for(const value of date) {
-          value.style.visibility = 'visible';
+        for(const dateInput of Todo.userInputs.date.group) {
+          dateInput.style.visibility = 'visible';
         }
         break;
 
       case 'flg':
-        showFlags.style.visibility = 'visible';
+        Todo.userInputs.priorityFlag.group.style.visibility = 'visible';
 
-        for (const flag of showFlags.children) {
+        for (const flag of Todo.userInputs.priorityFlag.group.children) {
           flag.children[0].style.visibility = 'visible';
         }
         break;
@@ -1000,55 +1009,5 @@ function Card(task) {
 }
 
 let lastSelectedProject;
-
-const tabProjectsList = document.querySelector('.app-aside-projects');
-
-function Group(project) {
-  // li
-  const projectItem = Doc(c, 'li');
-  projectItem.id = project.id;
-  projectItem.classList.add('project');
-
-    // div
-    const projectInfo = Doc(c, 'div');
-    projectInfo.classList.add('project-info');
-
-      // icon
-      const projectIcon = Doc(c, 'i');      
-      projectIcon.classList.add('fas');
-      projectIcon.classList.add('fa-circle');
-      projectIcon.classList.add('project-icon');
-      //projectIcon.style.color = project.color;  //setColor
-      projectInfo.appendChild(projectIcon);
-    
-      // paragraph
-      const projectName = Doc(c, 'p');
-      projectName.classList.add('project-name');
-      projectName.textContent = project.name;
-      projectInfo.appendChild(projectName);
-    
-    projectItem.appendChild(projectInfo);
-
-    const taskCount = Doc(c, 'p');
-    taskCount.classList.add('project-task-count');
-    taskCount.textContent = project.tasks.length;
-    projectItem.appendChild(taskCount);
-
-    projectItem.addEventListener('click', (e) => {
-      Todo.elements.dbHeading.textContent = project.name;
-      Todo.view.populateByProject(Todo.elements.dbProject, project.id);
-
-      for(let node of datesAside.children) node.classList.remove('js-aside-highlight');
-      if (lastSelectedProject !== undefined) lastSelectedProject.remove('js-aside-highlight');  
-    
-      projectItem.classList.add('js-aside-highlight');
-
-      lastSelectedProject = projectItem.classList;
-    });
-
-    tabProjectsList.appendChild(projectItem);
-
-  return projectItem;
-}
 
 Todo.restore();
