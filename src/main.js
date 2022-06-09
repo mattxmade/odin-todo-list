@@ -3,24 +3,21 @@ import './style.css';
 // Model
 import Task from './Task';
 import Project from './Project';
-
-// DOM
-//import Card from './cCard';
-//import Group from './cGroup';
-import Calendar from './Calendar'
+import Calendar from './Calendar';
 
 // Date-fns
 // JS months are 0 indexed ( pass -1 with month when calling date-fns methods )
-import { getDate, getDay, getMonth, getYear, isFuture, isToday } from 'date-fns';
-import { getDaysInMonth } from 'date-fns'
-import { isLeapYear } from 'date-fns';
+
 import { format } from 'date-fns';
+import { isLeapYear } from 'date-fns';
+import { getDaysInMonth } from 'date-fns'
+import { getDate, getDay, getMonth, getYear, isFuture, isToday } from 'date-fns';
 
 let lastSelectedProject;
 
 const Todo = (() => {
   // model
-  const projects = [];
+  const projects = Project.projects;
   const projectsFromLocalStorage = localStorage.getItem('projectList');
 
   const asideTab_projects = document.querySelector('.app-aside-projects');
@@ -38,7 +35,7 @@ const Todo = (() => {
   
             let lastIndex = projects.length;
   
-            Todo._addProjectToProjectsIndex(setProject, projects);
+            _addProjectToProjectsIndex(setProject, projects);
           
             // create project tab
             if (lastIndex !== projects.length) Group(setProject, asideTab_projects);
@@ -69,7 +66,7 @@ const Todo = (() => {
   
   const _updateStorage = () => localStorage.setItem('projectList', JSON.stringify(projects));
 
-  // Model
+  // Model :: Data :: Project
   const _notifyProject = (taskToHandle, action) => {
     for (const project of projects) {
 
@@ -88,44 +85,40 @@ const Todo = (() => {
     };
   }
 
-  // Model
+  // 1). Model :: Data :: Project :: Methods
   const _getTaskProject = (projectName, projects) => {
+    console.log(projectName, projects);
 
-    for (let project of projects) {
+    for (const project of projects) {
       if (projectName === project.name) return project;
     }
 
     return Project.create(projectName);
   }
 
-  // Model
+  // 2).
   const _addTaskToProject = (task, project) => {
     project.tasks.push(task); 
     task.projectID = project.id;
   }
 
-  // Model
-  // Check if project exists
-  const _exists = (itemToCheck, list) => {
-    let exists = false;
+  // const _addTaskToProject = (task, project) => {
+  //   Project.addTaskToProject(task, project);
+  // }
 
-    list.forEach(item => itemToCheck.id === item.id ? exists = true : 0 );
-    return exists;
+  // 3).
+  const _addProjectToProjectsIndex = (project, projectsToSearch) => {
+    Project.addProjectToProjectsIndex(project, projectsToSearch);
   }
 
-  // Model
-  const _addProjectToProjectsIndex = (project, projects) => {
-    if (_exists(project, projects) === false) projects.push(project);
-  }
-
-  // Model
+  // 4).
   const _removeAllTasksFromProject = (project) => {
     const tasks = project.tasks;
     if (tasks.length === 0) return;
     tasks.splice(0, tasks.length-1);
   }
 
-  // Model
+  // 5).
   const _removeProjectFromList = (projectToRemove, projects) => {
     if (projects.length === 0) return;
 
@@ -136,6 +129,7 @@ const Todo = (() => {
       }
     });
   }
+  // End of Project Methods
 
   // View - DOM
   const elements = {
@@ -163,6 +157,7 @@ const Todo = (() => {
     }
   }
 
+  // Initialise Listeners
   eventListeners.calendar.show.addEventListener('click', () => {
 
     elements.calendar.container.style.visibility = 'visible';
@@ -208,7 +203,7 @@ const Todo = (() => {
     }
   }
 
-  // Date inputs
+  // Modal View :: Date inputs
   userInputs.date.group = [ userInputs.date.day, userInputs.date.year, userInputs.date.month ];
 
   eventListeners.calendar.daysInMonths.forEach(month => {
@@ -247,6 +242,7 @@ const Todo = (() => {
     userInputs.date.myYear.textContent = deincrement;
   });
 
+  // Modal View :: Projects Dropdown 
   // render projects dropdown menu onClick
   userInputs.project.drpDn.addEventListener('click', () => {
 
@@ -293,6 +289,7 @@ const Todo = (() => {
   
   });
 
+  // Modal View :: Input group for quick iteration
   const keyInputGroup = [
     userInputs.task.input,
     userInputs.project.input, userInputs.project.drpDn,
@@ -304,7 +301,7 @@ const Todo = (() => {
     userInputs.priorityFlag.group
   ];
 
-  // Views
+  // View Methods
   const view = {
     lastView    : elements.dashboard,
     currentView : elements.dashboard,
@@ -426,10 +423,6 @@ const Todo = (() => {
       this.lastView = this.currentView;
     },
 
-    populateView: function() {
-
-    },
-
     populateAll: function() {
       this.currentView = elements.dashboard;
       if (this.currentView === this.lastView) return;
@@ -503,7 +496,7 @@ const Todo = (() => {
     }
   }
 
-  // Controller
+  // Controller :: Observers + Notifiers
   const controller = {
     observers: {config : { attributes: true, childList: true, subtree: true }},
     notify   : (data, action, element) => {
@@ -549,7 +542,8 @@ const Todo = (() => {
     _addTaskToProject,
     _removeProjectFromList,
     _removeAllTasksFromProject,
-    _addProjectToProjectsIndex,
+
+    _addProjectToProjectsIndex
   }
 
 })();
