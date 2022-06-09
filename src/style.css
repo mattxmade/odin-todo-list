@@ -1,0 +1,952 @@
+@import url("https://fonts.googleapis.com/css2?family=Ubuntu&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Teko:wght@600&display=swap");
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  font-size: 62.5%;
+}
+
+body {
+  font-size: 1.6rem;
+}
+
+p, li, legend, h1, h2 {
+  font-family: "Ubuntu", sans-serif;
+}
+
+ul {
+  list-style: none;
+}
+
+i, button {
+  cursor: pointer;
+}
+
+.wrapper {
+  background-color: rgb(223, 222, 222);
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/*=========
+  Nav Bar
+===========*/
+nav, footer {
+  z-index: 1;
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  padding: 1.2rem;
+  background-color: #9d9dfc;
+}
+
+nav i {
+  color: white;
+  font-size: 2.3rem;
+}
+
+nav .user-alerts {
+  position: relative;
+}
+
+.user-alerts i:last-child {
+  position: absolute;
+}
+
+.user-notify {
+  z-index: 1;
+  top: -0.1rem;
+  left: 1.3rem;
+  transition: 0.9s;
+  font-size: 3rem;
+  color: transparent;
+}
+
+.notify {
+  color: red;
+  font-size: 1.1rem;
+}
+
+nav ul {
+  width: 35%;
+  display: flex;
+  justify-content: space-around;
+}
+
+.pointer, i {
+  cursor: pointer;
+}
+
+nav .logo {
+  width: 35%;
+  cursor: auto;
+  font-size: 4rem;
+  margin-right: 1rem;
+}
+
+.nav-search {
+  width: 80%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.nav-search input {
+  width: 60%;
+  height: 3rem;
+  margin: 0 1rem;
+  padding: 0.5rem;
+  font-size: 1.4rem;
+  border-radius: 0.5rem;
+  border: none;
+}
+
+.nav-search input:focus-visible {
+  outline: 0.2rem solid lightblue;
+}
+
+@media (max-width: 620px) {
+  .nav-settings li:last-child i {
+    position: absolute;
+    left: -100vw;
+    visibility: hidden;
+  }
+}
+
+/*===========
+  Dashboard
+app-window: div
+  -aside
+    -ul: app-aside-calendar
+    -ul: app-aside-projects-list
+
+  -main: app-main-task-window
+    -dashboard
+=============*/
+.app-window {
+  flex: auto;
+  display: flex;
+}
+
+aside {
+  width: 28rem;
+  min-width: 28rem;
+  position: relative;
+  background-color: #fafafa;
+  padding: 2rem 2rem 5rem 2rem;
+  filter: drop-shadow(0 0.1rem 0.2rem rgba(0, 0, 0, 0.5));
+  display: flex;
+  flex-direction: column;
+  transition: 0.3s;
+}
+@media (max-width: 880px) {
+  aside {
+    top: 0;
+    z-index: 2;
+    position: absolute;
+    height: 100%;
+    left: -28rem;
+  }
+}
+
+.js-aside-drawer-animation {
+  left: 0;
+}
+
+.aside-drawer-icon {
+  width: 3rem;
+  height: 5rem;
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
+  height: fit-content;
+  padding: 0.5rem 0.5rem;
+  position: absolute;
+  visibility: hidden;
+  border-top-right-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+  background-color: inherit;
+  cursor: pointer;
+  right: -2rem;
+  top: 13.5rem;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+}
+.aside-drawer-icon i {
+  right: -0.3rem;
+  position: relative;
+  font-size: 3rem;
+  color: #9d9dfc;
+}
+@media (max-width: 880px) {
+  .aside-drawer-icon {
+    visibility: visible;
+  }
+}
+
+aside ul {
+  margin-bottom: 2rem;
+}
+
+aside li {
+  gap: 1rem;
+  width: 100%;
+  padding: 1rem;
+  height: 3.5rem;
+  cursor: pointer;
+  font-size: 1.7rem;
+  border-radius: 0.5rem;
+  display: flex;
+  align-items: center;
+}
+
+/*==================
+  Aside:
+    Task Overview
+====================*/
+.app-aside-calendar {
+  height: 20rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.js-aside-highlight {
+  background-color: #efefef;
+}
+
+/*==================
+  <li> Button Mask
+====================*/
+li {
+  position: relative;
+}
+
+.mask-button {
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  position: absolute;
+}
+
+/*============
+  Aside:
+    Projects
+==============*/
+aside ul:last-child {
+  flex: 1;
+  height: auto;
+  display: flex;
+  overflow: hidden;
+  flex-direction: column;
+  transition: 0.3s;
+}
+aside ul:last-child li {
+  display: flex;
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
+  height: fit-content;
+}
+aside ul:last-child li:not(:first-child) {
+  width: calc(100% - 2rem);
+  margin-top: 1rem;
+  margin-left: 2rem;
+  display: flex;
+  justify-content: space-between;
+}
+aside ul:last-child li:not(:first-child) i {
+  color: blue;
+  font-size: 1.3rem;
+}
+aside ul:last-child li:not(:first-child) .project-info {
+  gap: 1rem;
+  display: flex;
+  align-items: center;
+}
+
+.projects-dropdown-icon {
+  font-size: 2.2rem;
+  transition: 0.3s;
+  transform: rotate(0);
+}
+
+.dropdown-state {
+  transition: 0.3s;
+  transform: rotate(-90deg);
+}
+
+aside ul:last-child.dropdown-menu {
+  flex: 0 0 4.9rem;
+  transition: 0.3s;
+}
+
+/*=============
+  Dashboard:
+    Task view
+===============*/
+main {
+  flex: 1;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 3rem 4rem 3rem 7rem;
+  background-color: white;
+  overflow-y: hidden;
+}
+@media (max-width: 880px) {
+  main {
+    padding: 3rem 2.8rem;
+  }
+}
+
+main h2 {
+  margin-bottom: 4rem;
+}
+
+.new-task {
+  gap: 1rem;
+  display: flex;
+  margin-left: 1.5rem;
+  margin-bottom: 2rem;
+  color: rgb(110, 110, 110);
+}
+
+.dashboard-tasks,
+.dashboard-today,
+.dashboard-upcoming,
+.dashboard-search,
+.dashboard-project {
+  overflow: hidden;
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
+  height: fit-content;
+  margin-bottom: 2rem;
+  position: absolute;
+}
+
+.dashboard-tasks {
+  position: relative;
+}
+
+.complete-task {
+  transform: translate(0, 100vw);
+}
+
+.remove-task {
+  transform: translate(-100vw);
+}
+
+.congrats-mask {
+  z-index: -1;
+  visibility: hidden;
+  background-color: transparent;
+  transition: 0.3s;
+  inset: 0;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.congrats-mask p {
+  top: 0.5rem;
+  position: relative;
+  color: white;
+  transition: 0.3s;
+  font-size: 5rem;
+  font-family: "Teko", sans-serif;
+}
+
+.show-congrats-mask {
+  z-index: 20;
+  visibility: visible;
+  background-color: #9d9dfc;
+}
+.show-congrats-mask p {
+  color: white;
+}
+
+.task-card {
+  width: 100%;
+  display: flex;
+  padding: 1.5rem;
+  position: relative;
+  background-color: rgb(240, 240, 240);
+  border-bottom: 0.1rem solid lightgray;
+  margin-bottom: 1rem;
+  transition: 1.2s;
+}
+
+.task-check-col-1 {
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
+  justify-content: space-between;
+  margin-right: 1rem;
+}
+.task-check-col-1 i:first-child {
+  color: #9d9dfc;
+  font-size: 2.25rem;
+}
+
+.task-info {
+  gap: 1rem;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.task-details {
+  gap: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.task-details li {
+  gap: 1rem;
+  display: flex;
+  overflow: hidden;
+}
+.task-details li p {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.task-details li:not(:last-child) {
+  width: 35%;
+}
+@media (max-width: 1080px) {
+  .task-details li:not(:last-child) {
+    width: 100%;
+  }
+}
+.task-details li:first-child {
+  min-width: 10rem;
+}
+.task-details .task-project {
+  width: -webkit-max-content;
+  width: -moz-max-content;
+  width: max-content;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+@media (max-width: 1080px) {
+  .task-details .task-project {
+    width: -webkit-max-content;
+    width: -moz-max-content;
+    width: max-content;
+  }
+}
+.task-details .task-project i {
+  color: blue;
+}
+.task-details .task-project p {
+  text-align: right;
+}
+
+.task-card .task-remove {
+  position: absolute;
+  top: 1rem;
+  right: 1.6rem;
+}
+
+/*================
+  New Task Modal
+==================*/
+dialog {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  margin: auto;
+  border: none;
+  background-color: transparent;
+}
+
+.dialog-task-bar {
+  width: 70%;
+  min-height: 13rem;
+  height: -webkit-max-content;
+  height: -moz-max-content;
+  height: max-content;
+  padding: 2.5rem 1.5rem 1.5rem;
+  margin: 6rem 4rem 0 auto;
+  border: none;
+  border-radius: 1rem;
+  background-color: white;
+  box-shadow: 0 0 0.5rem 0.1rem black;
+}
+@media (max-width: 1080px) {
+  .dialog-task-bar {
+    width: 95%;
+    margin: 6rem auto 0;
+  }
+}
+
+.js-task-icon {
+  height: 4rem;
+  width: 4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+  border: 0.2rem solid transparent;
+  transition: 0.3s;
+}
+
+.modal-icon-select {
+  border: 0.2rem dashed #9d9dfc;
+}
+
+form {
+  margin-bottom: 1.5rem;
+}
+
+form input {
+  padding: 1rem;
+  border-radius: 0.5rem;
+  border: 0.2rem solid #9d9dfc;
+}
+
+.inputs {
+  width: 35%;
+  height: 3.9rem;
+  position: relative;
+}
+@media (max-width: 880px) {
+  .inputs {
+    width: 57.5%;
+  }
+}
+
+.inputs input {
+  width: 100%;
+  background-color: white;
+}
+
+.inputs .input-task {
+  position: absolute;
+  visibility: visible;
+}
+
+.inputs input:focus-visible {
+  outline: none;
+}
+
+.dropdown-set-project,
+.dropdown-set-date,
+.input-date,
+.input-time,
+.input-comment {
+  width: 100%;
+  height: 100%;
+  visibility: hidden;
+}
+.dropdown-set-project i,
+.dropdown-set-date i,
+.input-date i,
+.input-time i,
+.input-comment i {
+  width: 3rem;
+  height: 90%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  top: 0.2rem;
+  right: 0.2rem;
+  position: absolute;
+  border-radius: 0.1rem;
+  background-color: white;
+}
+@media (max-width: 620px) {
+  .dropdown-set-project i,
+.dropdown-set-date i,
+.input-date i,
+.input-time i,
+.input-comment i {
+    height: 85%;
+    top: 0.3rem;
+    left: auto;
+  }
+}
+
+.project-select-menu {
+  z-index: 5;
+  padding: 1rem;
+  border: 0.1rem dashed lightblue;
+  border-top: none;
+  background-color: white;
+  border-bottom-left-radius: 1rem;
+  border-bottom-right-radius: 1rem;
+  gap: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.project-selector {
+  overflow: hidden;
+  transition: 0.2s;
+  padding: 1rem 1rem;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  border-radius: 0.5rem;
+  border: 0.1rem solid transparent;
+  background-color: rgb(253, 237, 240);
+}
+
+.project-selector:hover {
+  border: 0.1rem solid black;
+}
+
+.input-date,
+.input-time,
+.input-comment,
+.dropdown-set-date {
+  top: 0;
+  position: absolute;
+}
+
+.input-year {
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+}
+
+.dropdown-set-date {
+  height: 100%;
+  gap: 0.5rem;
+  display: grid;
+  grid-template-columns: repeat(3, 33.3333333333%);
+}
+@media (max-width: 620px) {
+  .dropdown-set-date {
+    grid-template-columns: repeat(3, 8rem);
+  }
+}
+
+.input-calendar {
+  z-index: 5;
+  min-width: 20rem;
+  grid-column: span 3;
+  position: relative;
+  top: -13rem;
+}
+@media (max-width: 1080px) {
+  .input-calendar {
+    top: -9.3rem;
+  }
+}
+@media (max-width: 620px) {
+  .input-calendar {
+    top: -7rem;
+  }
+}
+
+.input-calendar button {
+  position: absolute;
+  bottom: 0.6rem;
+  right: 1.5rem;
+  width: 10rem;
+  height: 3rem;
+}
+@media (max-width: 1080px) {
+  .input-calendar button {
+    width: 8rem;
+    bottom: 0.6rem;
+    height: -webkit-fit-content;
+    height: -moz-fit-content;
+    height: fit-content;
+  }
+}
+
+.dropdown-set-date li {
+  height: 100%;
+  display: flex;
+  position: relative;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 0.5rem;
+  background-color: white;
+  border: 0.2rem solid #9d9dfc;
+}
+
+.dropdown-set-date li:first-child .js-calendar-icon-btn {
+  z-index: 5;
+  width: 2.5rem;
+  height: 2.5rem;
+  position: absolute;
+  top: 15%;
+  right: -1.7rem;
+  border-radius: 0.5rem;
+  border: 0.1rem solid #9d9dfc;
+  padding-bottom: 0.1rem;
+  padding-left: 0.05rem;
+}
+
+.dropdown-set-date p {
+  padding: 1rem;
+}
+
+.dropdown-set-date li p:first-child {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+i.year-nav {
+  width: 50%;
+  font-size: 2rem;
+  background-color: transparent;
+}
+
+i.year-nav-up {
+  top: -2.75rem;
+  left: -5%;
+}
+
+i.year-nav-down {
+  top: -2.75rem;
+  right: -5%;
+}
+
+fieldset {
+  gap: 1rem;
+  width: 100%;
+  border: none;
+  display: flex;
+}
+@media (max-width: 880px) {
+  fieldset {
+    flex-wrap: wrap;
+  }
+}
+@media (max-width: 620px) {
+  fieldset {
+    display: grid;
+    flex-wrap: nowrap;
+  }
+}
+
+legend {
+  color: rgba(0, 0, 0, 0.5);
+  margin-bottom: 0.5rem;
+}
+
+fieldset .task-icons {
+  min-width: 26rem;
+  flex: auto;
+  display: flex;
+  position: relative;
+  align-items: center;
+  justify-self: flex-start;
+  justify-content: space-evenly;
+}
+@media (max-width: 880px) {
+  fieldset .task-icons {
+    gap: 1rem;
+    margin-right: 0;
+  }
+}
+@media (max-width: 620px) {
+  fieldset .task-icons {
+    justify-self: end;
+    width: 100%;
+  }
+}
+
+.task-icons i.fas,
+.task-icons i.far {
+  font-size: 2rem;
+  position: relative;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.task-icons i.fa-exclamation {
+  color: transparent;
+  position: absolute;
+  bottom: calc(-100% + 0.4rem);
+  transition: 0.3s;
+}
+
+.task-icons i.show-error {
+  color: orange;
+}
+
+.flag-icon-group {
+  height: 100%;
+  width: 100%;
+  inset: 0;
+  visibility: hidden;
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 0.5rem;
+  border: 0.2rem solid #9d9dfc;
+}
+
+.task-icons i.fa-flag {
+  color: white;
+  -webkit-text-stroke: 0.15rem rgb(126, 126, 126);
+}
+
+i.fa-flag {
+  -webkit-text-stroke: 0.15rem rgb(126, 126, 126);
+}
+
+.flag-icon-group li {
+  margin: 0 1rem;
+}
+
+i.fa-flag.flag-r,
+i.fa-flag.flag-o,
+i.fa-flag.flag-y,
+i.fa-flag.flag-w {
+  font-size: 2rem;
+  z-index: -1;
+  visibility: hidden;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  border: none;
+}
+
+i.fa-flag.flag-r {
+  color: red;
+}
+
+i.fa-flag.flag-o {
+  color: orange;
+}
+
+i.fa-flag.flag-y {
+  color: yellow;
+}
+
+i.fa-flag.flag-w {
+  color: white;
+}
+
+i.fa-flag .icon-selector-visibility {
+  z-index: 10;
+  transition: 0.3s;
+  -webkit-user-select: auto;
+     -moz-user-select: auto;
+      -ms-user-select: auto;
+          user-select: auto;
+  visibility: visible;
+  transform: translate(0, 0);
+}
+
+fieldset .task-buttons {
+  gap: 1rem;
+  justify-self: flex-end;
+  display: flex;
+}
+
+.cancel,
+.add {
+  padding: 0.5rem;
+  min-width: 8rem;
+  height: 3.5rem;
+  border-radius: 0.5rem;
+  border: 0.1rem solid black;
+}
+
+.cancel {
+  background-color: white;
+}
+
+.add {
+  color: white;
+  background-color: rgb(157, 157, 252);
+}
+
+/*==========
+  Calendar
+============*/
+.calendar {
+  width: 100%;
+  margin: 0 auto;
+  height: 20rem;
+  border-radius: 0.5rem;
+  background-color: white;
+  outline: 0.1rem solid blue;
+  border: 0.1rem solid lightgrey;
+}
+@media (max-width: 1080px) {
+  .calendar {
+    height: 16.1rem;
+  }
+}
+
+.month h3 {
+  margin: 1rem 0 1rem;
+}
+
+.day {
+  margin: 0.4rem;
+  height: 2.125rem;
+  outline: 0.1rem solid lightgray;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+@media (max-width: 1080px) {
+  .day {
+    margin: 0;
+    height: 2.125rem;
+  }
+}
+
+.day p {
+  position: absolute;
+  font-size: 1.2rem;
+}
+
+.calendar button i {
+  width: 96%;
+  font-size: 2rem;
+  background-color: transparent;
+}
+
+footer, footer ul {
+  width: 100%;
+  display: flex;
+  color: white;
+  font-weight: bold;
+  align-items: center;
+  justify-content: space-around;
+}
+
+i.fa-chevron-circle-left {
+  left: 1rem;
+}
+
+i.fa-chevron-circle-right {
+  right: 1rem;
+}
+
+i.fa-chevron-circle-left,
+i.fa-chevron-circle-right {
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
+  height: fit-content;
+  background-color: transparent;
+  top: 1.25rem;
+}/*# sourceMappingURL=style.css.map */
