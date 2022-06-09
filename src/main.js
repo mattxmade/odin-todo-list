@@ -102,10 +102,6 @@ const Todo = (() => {
     task.projectID = project.id;
   }
 
-  // const _addTaskToProject = (task, project) => {
-  //   Project.addTaskToProject(task, project);
-  // }
-
   // 3).
   const _addProjectToProjectsIndex = (project, projectsToSearch) => {
     Project.addProjectToProjectsIndex(project, projectsToSearch);
