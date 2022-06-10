@@ -301,6 +301,8 @@ const Todo = (() => {
     lastView    : elements.dashboard,
     currentView : elements.dashboard,
 
+    data: { search: { results: [] } },
+
     updateProjectTaskTotal: function(projects) {
 
       for (const project of projects) {
@@ -710,13 +712,13 @@ for (let section of Todo.elements.aside_dates.children) {
 }
 
 let lastHeading = 'Tasks';
+const newTaskDb = document.querySelector('.new-task');
 
 function sortTasks(e) {
+  newTaskDb.style.visibility = 'visible';
   switch(e.target.textContent.trim()) {
 
     case 'Tasks':
-      //Todo.view.populateAll();
-      //console.log('tasks-tab');
       lastHeading = 'Tasks';
       Todo.elements.dbHeading.textContent = 'Tasks';
       Todo.view.sort(Todo.elements.dashboard, null);
@@ -724,58 +726,50 @@ function sortTasks(e) {
 
     case 'Today':
       lastHeading = 'Today';
-      //console.log('today-tab');
-      //Todo.view.populateToday();
       Todo.elements.dbHeading.textContent = 'Today';
       Todo.view.sort(Todo.elements.today, isToday);
       break;
 
     case 'Upcoming':
       lastHeading = 'Upcoming';
-      //console.log('upcoming-tab');
-      //Todo.view.populateUpcoming();
       Todo.elements.dbHeading.textContent = 'Upcoming';
       Todo.view.sort(Todo.elements.upcoming, isFuture);
       break;
   }
 }
 
-// turn into group if more dropdowns required
+// change to group if more dropdowns required
 const projectsDropdown = document.querySelector('.js-projects-dropdown');
 projectsDropdown.addEventListener('click', (e) => {
+
   e.target.style.backgroundColor = 'transparent';
   e.target.parentNode.parentNode.classList.toggle('dropdown-menu');
   e.target.parentNode.children[1].classList.toggle('dropdown-state');
-  
-  
+
   e.target.classList.add('js-aside-highlight');
 });
-
-let searchArray = [];
-
-const newTaskDb = document.querySelector('.new-task');
 
 // search
 const search = document.querySelector('.js-search');
 
 search.addEventListener('input', (e) => {
-  //newTaskDb.style.visibility = 'hidden';
-  //Todo.elements.dbHeading.textContent = 'Search';
+  lastHeading = 'Search';
+  newTaskDb.style.visibility = 'hidden';
+  Todo.elements.dbHeading.textContent = 'Search';
+
   Todo.projects.forEach(project => {
     for (const task of project.tasks) {
       if (task.name.toLowerCase() === e.target.value.toLowerCase()) {
-        searchArray.push(task);
+        Todo.view.data.search.results.push(task);
       }
     }
   });
-  Todo.view.search(Todo.elements.search, searchArray);
-  searchArray = [];
+  Todo.view.search(Todo.elements.search, Todo.view.data.search.results);
+  Todo.view.data.search.results = [];
 });
 
 search.addEventListener('blur', (e) => {
-  //newTaskDb.style.visibility = 'visible';
-  //Todo.elements.dbHeading = lastHeading;
-  searchArray = [];
+  Todo.view.search.results = [];
 });
 
 // generate dashboard task
