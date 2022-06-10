@@ -87,7 +87,6 @@ const Todo = (() => {
 
   // 1). Model :: Data :: Project :: Methods
   const _getTaskProject = (projectName, projects) => {
-    console.log(projectName, projects);
 
     for (const project of projects) {
       if (projectName === project.name) return project;
@@ -244,7 +243,7 @@ const Todo = (() => {
 
     if (userInputs.project.menu.length === 0) {
   
-      const selectContainer = Doc(c, 'ul');
+      const selectContainer = document.createElement('ul');
       selectContainer.classList.add('project-select-menu');
       selectContainer.style.width = '100%';
       selectContainer.style.height = 'auto';
@@ -252,7 +251,7 @@ const Todo = (() => {
       selectContainer.style.visibility = 'visible';
   
       if (projects.length === 0) {
-        const selector = Doc(c, 'li');
+        const selector = document.createElement('li');
         selector.classList.add('project-selector');
         selector.textContent = 'Empty';
         selector.style.position = 'relative';
@@ -262,7 +261,7 @@ const Todo = (() => {
   
       else {
         for (const project of projects) {
-          const selector = Doc(c, 'li');
+          const selector = document.createElement('li');
           selector.classList.add('project-selector');
           selector.style.cursor = 'pointer';
           selector.textContent = project.name;
@@ -543,13 +542,6 @@ const Todo = (() => {
   }
 
 })();
-
-let c = 'create';
-let s1 = 'selectOne';
-let s0 = 'selectAll';
-
-import Doc from './Doc';
-const dashboard = Doc(s1, '.dashboard-tasks');
 
 const newTaskButtons = document.querySelectorAll('.pointer');
 
