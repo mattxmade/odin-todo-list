@@ -324,7 +324,6 @@ const Todo = (() => {
     clearLastView: (viewToClear) => {
       let toRemove = [];
 
-      console.dir(viewToClear);
       if (viewToClear.children.length !== 0) {
         for (const item of viewToClear.children) toRemove.push(item);
       }
@@ -381,7 +380,7 @@ const Todo = (() => {
     },
 
     // change so more open - what if other sort methods required
-    sort: function(view, sort) {
+    sort: function(view, dateSortCallback) {
       this.currentView = view;
       if (this.currentView === this.lastView) return;
 
@@ -395,92 +394,16 @@ const Todo = (() => {
       for (const project of projects) {
         if (project.tasks.length !== 0) project.tasks.forEach(task => {
 
-          switch(sort) {
-            case 'all':
+          switch(dateSortCallback) {
+            case null:
               toAdd.push(Card(task));
               break;
 
-            case 'today':
-              if (isToday(new Date(task.dueDate.year, task.dueDate.month-1, task.dueDate.day))) toAdd.push(Card(task));
-              break;
-
-            case 'upcoming':
-              if (isFuture(new Date(task.dueDate.year, task.dueDate.month-1, task.dueDate.day))) toAdd.push(Card(task));
+            default:
+              if (dateSortCallback(new Date(task.dueDate.year, task.dueDate.month-1, task.dueDate.day))) toAdd.push(Card(task));
               break;
           }          
           
-        });
-      }
-
-      toAdd.forEach( item => this.currentView.appendChild( item ) );
-      toAdd = [];
-
-      this.lastView = this.currentView;
-    },
-
-    populateAll: function() {
-      this.currentView = elements.dashboard;
-      if (this.currentView === this.lastView) return;
-
-      this.clearLastView(this.lastView);
-
-      let toAdd = [];
-
-      for (const project of projects) {
-        if (project.tasks.length !== 0) project.tasks.forEach(task => {
-          toAdd.push(Card(task));
-        });
-      }
-
-      toAdd.forEach( item => this.currentView.appendChild( item ) );
-      toAdd = [];
-
-      this.lastView = this.currentView;
-    },
-
-    populateToday: function() {
-      this.currentView = elements.today;
-      if (this.currentView === this.lastView) return;
-
-      let toAdd = [];
-      let toRemove = [];
-
-      if (this.lastView.children.length !== 0) {
-        for (const item of this.lastView.children) { toRemove.push(item) }
-      } 
-
-      toRemove.forEach(item => item.remove());
-      toRemove = [];
-
-      for (const project of projects) {
-        if (project.tasks.length !== 0) project.tasks.forEach(task => {
-          if (isToday(task.dueDate)) toAdd.push(Card(task));
-        });
-      }
-
-      toAdd.forEach( item => this.currentView.appendChild( item ) );
-      toAdd = [];
-
-      this.lastView = this.currentView;
-    },
-
-    populateUpcoming: function() {
-      this.currentView = elements.upcoming;
-      if (this.currentView === this.lastView) return;
-
-      let toAdd = [];
-      let toRemove = [];
-
-      if (this.lastView.children.length !== 0) {
-        for (const item of this.lastView.children) { toRemove.push(item) }
-      } 
-
-      toRemove.forEach(item => item.remove());
-      toRemove = [];
-
-      for (const project of projects) {
-        if (project.tasks.length !== 0) project.tasks.forEach(task => {
-          if (isFuture(task.dueDate)) toAdd.push(Card(task));
         });
       }
 
@@ -796,7 +719,7 @@ function sortTasks(e) {
       //console.log('tasks-tab');
       lastHeading = 'Tasks';
       Todo.elements.dbHeading.textContent = 'Tasks';
-      Todo.view.sort(Todo.elements.dashboard, 'all');
+      Todo.view.sort(Todo.elements.dashboard, null);
       break;
 
     case 'Today':
@@ -804,7 +727,7 @@ function sortTasks(e) {
       //console.log('today-tab');
       //Todo.view.populateToday();
       Todo.elements.dbHeading.textContent = 'Today';
-      Todo.view.sort(Todo.elements.today, 'today');
+      Todo.view.sort(Todo.elements.today, isToday);
       break;
 
     case 'Upcoming':
@@ -812,7 +735,7 @@ function sortTasks(e) {
       //console.log('upcoming-tab');
       //Todo.view.populateUpcoming();
       Todo.elements.dbHeading.textContent = 'Upcoming';
-      Todo.view.sort(Todo.elements.upcoming, 'upcoming');
+      Todo.view.sort(Todo.elements.upcoming, isFuture);
       break;
   }
 }
