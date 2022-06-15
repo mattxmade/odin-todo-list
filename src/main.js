@@ -12,6 +12,7 @@ import { format } from 'date-fns';
 import { isLeapYear } from 'date-fns';
 import { getDaysInMonth } from 'date-fns'
 import { getDate, getDay, getMonth, getYear, isFuture, isToday } from 'date-fns';
+import { vi } from 'date-fns/locale';
 
 let lastSelectedProject;
 
@@ -42,22 +43,9 @@ const Todo = (() => {
 
             // create task card
             const newTaskCard = Card(task);
-  
+
             //render to correct view
-            switch(view.currentView) {
-          
-              case elements.dashboard:
-                view.currentView.appendChild(newTaskCard);
-                break;
-          
-              case elements.today:
-                if (!isFuture(new Date(task.dueDate.year, task.dueDate.month-1, task.dueDate.day))) view.currentView.appendChild(newTaskCard);
-                break;
-          
-              case elements.upcoming:
-                if (isFuture(new Date(task.dueDate.year, task.dueDate.month-1, task.dueDate.day))) view.currentView.appendChild(newTaskCard);
-                break;
-            }
+            _renderToView(newTaskCard, view.currentView)
           }
         }
       });
@@ -381,7 +369,6 @@ const Todo = (() => {
       this.lastView = this.currentView;
     },
 
-    // change so more open - what if other sort methods required
     sort: function(view, dateSortCallback) {
       this.currentView = view;
       if (this.currentView === this.lastView) return;
@@ -416,6 +403,26 @@ const Todo = (() => {
     }
   }
 
+  const _renderToView = (element, view) => {
+    switch(view) {
+      case elements.dashboard:
+        view.appendChild(element);
+        break
+
+      case elements.today:
+        if (!isFuture(new Date(element.dueDate.year, element.dueDate.month-1, element.dueDate.day))) {
+          view.appendChild(element)
+        }
+        break;
+      
+      case elements.upcoming:
+        if (isFuture(new Date(element.dueDate.year, element.dueDate.month-1, element.dueDate.day))) {
+          view.appendChild(element)
+        }
+        break
+    }
+  }
+
   // Controller :: Observers + Notifiers
   const controller = {
     observers: {config : { attributes: true, childList: true, subtree: true }},
@@ -423,6 +430,10 @@ const Todo = (() => {
       _notifyProject(data, action);
       _updateStorage();
       element.remove();
+    },
+
+    displayAdapter: (element, view) => {
+      _renderToView(element, view)
     }
   }
 
@@ -557,63 +568,51 @@ function showTaskForm(e) {
 
     const newTaskCard = Card(newTask);
 
-    const task_fin = newTaskCard.querySelector('.task-complete');
-    const task_win = newTaskCard.querySelector('.congrats-mask');
-    const task_bin = newTaskCard.querySelector('.fa-trash-alt');
+    // const task_fin = newTaskCard.querySelector('.task-complete');
+    // const task_win = newTaskCard.querySelector('.congrats-mask');
+    // const task_bin = newTaskCard.querySelector('.fa-trash-alt');
 
-   task_fin.addEventListener('click', (e) => {
-      e.target.classList.remove('far');
-      e.target.classList.remove('fa-circle');
+    // task_fin.addEventListener('click', (e) => {
+    //   e.target.classList.remove('far');
+    //   e.target.classList.remove('fa-circle');
 
-      e.target.classList.add('fas');
-      e.target.classList.add('fa-check-circle');
-      e.target.style.color = 'green';
+    //   e.target.classList.add('fas');
+    //   e.target.classList.add('fa-check-circle');
+    //   e.target.style.color = 'green';
         
-      setTimeout(() => {
-        task_win.classList.add('show-congrats-mask');
-      }, 1200);
+    //   setTimeout(() => {
+    //     task_win.classList.add('show-congrats-mask');
+    //   }, 1200);
         
-      setTimeout(() => {
-        newTaskCard.classList.add('remove-task');
-      }, 2400);
+    //   setTimeout(() => {
+    //     newTaskCard.classList.add('remove-task');
+    //   }, 2400);
 
-      setTimeout(() => {
+    //   setTimeout(() => {
 
-        Todo._notifyProject(newTask, 'remove');
-        Todo._updateStorage();
-        newTaskCard.remove();
+    //     Todo._notifyProject(newTask, 'remove');
+    //     Todo._updateStorage();
+    //     newTaskCard.remove();
 
-      }, 3600);
-    });
+    //   }, 3600);
+    // });
 
-    task_bin.addEventListener('click', (e) => {
-      newTaskCard.classList.add('remove-task');
+    // task_bin.addEventListener('click', (e) => {
+    //   newTaskCard.classList.add('remove-task');
   
-      setTimeout(() => {
+    //   setTimeout(() => {
 
-        Todo._notifyProject(newTask, 'remove');
-        Todo._updateStorage();
-        newTaskCard.remove();
+    //     Todo._notifyProject(newTask, 'remove');
+    //     Todo._updateStorage();
+    //     newTaskCard.remove();
 
-      }, 1200);
-  });
+    //   }, 1200);
+    // });
 
-    //render to correct view
-    switch(Todo.view.currentView) {
-
-      case Todo.elements.dashboard:
-        Todo.view.currentView.appendChild(newTaskCard);
-        break;
-
-      case Todo.elements.today:
-        if (!isFuture(newTask.dueDate)) Todo.view.currentView.appendChild(newTaskCard);
-        break;
-
-      case Todo.elements.upcoming:
-        if (isFuture(newTask.dueDate)) Todo.view.currentView.appendChild(newTaskCard);
-        break;
-
-    }
+    // render to correct view
+    Todo.controller.displayAdapter(newTaskCard, Todo.view.currentView)
+    
+    // update local session storage
     Todo._updateStorage();
 
     taskModal.close();
@@ -711,7 +710,6 @@ for (let section of Todo.elements.aside_dates.children) {
   });
 }
 
-let lastHeading = 'Tasks';
 const newTaskDb = document.querySelector('.new-task');
 
 function sortTasks(e) {
@@ -719,19 +717,16 @@ function sortTasks(e) {
   switch(e.target.textContent.trim()) {
 
     case 'Tasks':
-      lastHeading = 'Tasks';
       Todo.elements.dbHeading.textContent = 'Tasks';
       Todo.view.sort(Todo.elements.dashboard, null);
       break;
 
     case 'Today':
-      lastHeading = 'Today';
       Todo.elements.dbHeading.textContent = 'Today';
       Todo.view.sort(Todo.elements.today, isToday);
       break;
 
     case 'Upcoming':
-      lastHeading = 'Upcoming';
       Todo.elements.dbHeading.textContent = 'Upcoming';
       Todo.view.sort(Todo.elements.upcoming, isFuture);
       break;
