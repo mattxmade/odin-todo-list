@@ -25,6 +25,14 @@ const Components = () => {
     },
   };
 
+  const eventListeners = {
+    calendar: {
+      show: document.querySelector(".js-calendar-icon-btn"),
+      hide: document.querySelector(".js-close-calendar-btn"),
+      daysInMonths: views.calendar.container.childNodes,
+    },
+  };
+
   const inputs = {
     task: { input: document.querySelector(".input-task") },
 
@@ -56,7 +64,7 @@ const Components = () => {
 
   inputs.date.group = [inputs.date.day, inputs.date.year, inputs.date.month];
 
-  return { views, inputs };
+  return { views, inputs, eventListeners };
 };
 
 export default Components;
